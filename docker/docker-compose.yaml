@@ -16,9 +16,8 @@ services:
             dockerfile: ./Dockerfile.wrk
         depends_on:
             - redis-db
-        image: kjm24/gene_api:1.0
+        image: avlavelle/gene_api
         environment:
           - REDIS_IP=redis-db
         ports:
             - 5000:5000
-

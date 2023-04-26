@@ -19,7 +19,7 @@ spec:
       containers:
         - name: flaskdeploys
           imagePullPolicy: Always
-          image: kjm24/gene_api:1.0
+          image: avlavelle/gene_api
           env:
           - name: REDIS_IP
             value: gene-prod-redis-service
