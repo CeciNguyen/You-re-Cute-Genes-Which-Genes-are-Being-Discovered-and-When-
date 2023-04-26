@@ -2,29 +2,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: avlav-test-redis-deployment
+  name: gene-prod-redis-deployment
   labels:
     username: avlav
-    env: test
+    env: prod
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: avlav-test-redis
+      app: gene-prod-redis
   template:
     metadata:
       labels:
-        app: avlav-test-redis
+        app: gene-prod-redis
     spec:
       containers:
         - name: deploys
           image: redis:7
           command:  
           volumeMounts:
-          - name: avlav-test-redis-pvc
+          - name: gene-prod-redis-pvc
             mountPath: "/data"
       volumes:
-      - name: avlav-test-redis-pvc
+      - name: gene-prod-redis-pvc
         persistentVolumeClaim:
-          claimName: avlav-test-redis-pvc 
+          claimName: gene-prod-redis-pvc 
 

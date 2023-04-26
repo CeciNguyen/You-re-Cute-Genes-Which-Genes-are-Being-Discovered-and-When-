@@ -2,11 +2,11 @@
 kind: Service
 apiVersion: v1
 metadata:
-    name: test-service-nodeport
+    name: prod-service-nodeport
 spec:
     type: NodePort
     selector:
-        app: avlav-test-flask
+        app: gene-prod-flask
     ports:
         - port: 5000
           targetPort: 5000
