@@ -1,0 +1,20 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wrk-deployment
+  labels:
+    app: wrk-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wrk-app
+  template:
+    metadata:
+      labels:
+        app: wrk-app
+    spec:
+      containers:
+        - name: wrkdeploys
+          image: kjm24/gene_api:1.0
