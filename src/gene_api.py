@@ -299,7 +299,8 @@ def get_help() -> str:
     ten ="   /when/<hgnc_id> (GET)                          Return dates of approval or modification for a specified HGNC ID\n"
     ele ="   /imagedata (GET)                               Return the data used to generate the image from the /image route\n"
     twe ="   /locusdata (GET)                               Return the number of entries in each locus group\n"
-    thi ="   /locus/<hgnc_id>                               Return the locus group of a specified HGNC ID\n"
+    thi ="   /locus/<hgnc_id> (GET)                         Return the locus group of a specified HGNC ID\n"
+    fot ="   /jobs (POST)                                   Create a new job to do some analysis of the data\n"
     return intro + head2 + two + sev + head1 + one + fou + fiv + nin + ele+ ten +twe + thi+ head3 + thr + eig + head4 + six
 
 @app.route('/jobs', methods=['POST'])
