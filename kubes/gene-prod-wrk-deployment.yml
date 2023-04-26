@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
         - name: wrkdeploys
-          image: kjm24/gene_api:1.0
+          image: avlavelle/gene_api
