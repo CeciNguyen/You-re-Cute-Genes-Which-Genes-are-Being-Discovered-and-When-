@@ -198,7 +198,8 @@ def get_image():
     DELETE: Deletes the image from the database and returns confirmation of this 
         to the user.
     Args:
-        POST: None.
+        POST: start (int): Starting year for the plot.
+              end (int): Ending year for the plot.
         GET: None.
         DELETE: None.
     Returns:
@@ -212,6 +213,25 @@ def get_image():
         return ("No data in the database. Please use a POST route first.\n")
     counts = []
     years = []
+    start = request.args.get('start', 1986)
+    end = request.args.get('end', 2023)
+
+    if start:
+        try:
+            start = int(start)
+        except ValueError:
+            return ("Enter a positive integer for start year.", 400)
+
+    if end:
+        try:
+            end = int(end)
+        except ValueError:
+            return ("Enter a positive integer for end year.", 400)
+
+    if start and end:
+        if start >= end:
+            return ("Your start year must be less than your end year.")
+
     if request.method == 'POST':
         for item in rd.keys():
             gene = json.loads(rd.get(item))
@@ -224,6 +244,10 @@ def get_image():
         for item in yeard:
             y.append(item)
             c.append(yeard[item])
+        sind = y.index(str(start))
+        eind = y.index(str(end))+1
+        y = y[sind:eind]
+        c = c[sind:eind]
         plt.figure(figsize=(28,6))
         plt.bar(y, c, width = 0.35)
         plt.xlabel("Years")
@@ -231,8 +255,12 @@ def get_image():
         plt.title("Genes Approved Each Year")
         plt.savefig('approvalyears.png')
         file_bytes = open('./approvalyears.png', 'rb').read()
+        dset = {}
+        for x in range(len(y)):
+            dset.update({str(y[x]):x[x]})
         rd1.set('genes_approved', file_bytes)
-        rd1.set('image_data', json.dumps(yeard))
+        #rd1.set('image_data', json.dumps(yeard))
+        rd1.set('image_data', json.dumps(dset))
         return ("Image created\n")
     elif request.method == 'GET':
         path = './myapprovalyears.png'
@@ -293,7 +321,7 @@ def get_help() -> str:
     fou ="   /genes (GET)                                   Return a list of all HGNC IDs\n"
     fiv ="   /genes/<hgnc_id> (GET)                         Returns all of the information for a specified HGNC ID\n"
     six ="   /help (GET)                                    Return help text for the user\n"
-    sev ="   /image (POST)                                  Generate a plot and post it to the database\n"
+    sev ="   /image?start=year&end=year (POST)              Generate a plot of the specified years and post it to the database\n"
     eig ="   /image (DELETE)                                Delete image from the database\n"
     nin ="   /image (GET)                                   Return image to the user\n"
     ten ="   /when/<hgnc_id> (GET)                          Return dates of approval or modification for a specified HGNC ID\n"
