@@ -1,18 +1,18 @@
 # You're Cute Genes: Which Genes are Being Discovered and When?
-###############################################################
-This project is compiled of three Python scripts that build a Flask application and provide different routes for the user to query that return different pieces of information about the HGNC data, using the HGNC data from HUGO.The project also includes a Dockerfile that allows any user to pull the image from Docker Hub and run an instance of the image into a container on their personal machine, as well as a docker-compose file that allows a user to start the container easily and succinctly.
 
-The Flask application routes are important because the HGNC data contains loads of information that may not be interesting to the user. The Flask application and the routes allow users to quickly query the information that they may be looking for without having to comb through the data manually. The application also utilizes the Redis database, making it possible to store and come back to the data. The Dockerfile allows any user to have access to these capabilities through running an instance of the image on their own machine, plus the docker-compose file automates the deployment of the application, so the container is easy to start. 
-################################################################
-The project also includes .yml files that include a Redis service, deployment, and pvc, as well as a Flask service and deployment. These files allow the project to be deployed into Kubernetes.
+This project is compiled of three Python scripts that build a Flask application, provide different routes for the user to query that return different pieces of information about the HGNC data, using the HGNC complete set from HUGO, and create jobs as prompted by the user. The project also includes a Dockerfile that allows any user to pull the image from Docker Hub and run an instance of the image into a container on their personal machine, as well as a docker-compose file that allows a user to start the container easily and succinctly.
+
+The project also includes .yml files that include a Redis service, deployment, and pvc, as well as a Flask service, deployment, and worker deployment. These files allow the project to be deployed into Kubernetes.
+
+The Flask application routes are important because the HGNC data contains loads of information that may not be interesting to the user. The Flask application and the routes allow users to quickly query the information that they may be looking for without having to comb through the data manually. The application also utilizes the Redis database, making it possible to store the data and return to it, even after restaring the application. The Dockerfile allows any user to have access to these capabilities through running an instance of the image on their own machine, plus the docker-compose file automates the deployment of the application, so the container is easy to start. 
 
 ## Accessing and Describing the Data
  
-The HGNC data is loaded in from this link, https://ftp.ebi.ac.uk/pub/databases/genenames/hgnc/json/hgnc\_complete\_set.json , where the data is in json format. The application uses requests to access the data, and the POST route puts the data into the Redis database. The data contains lots of unique and interesting information about every hgnc\_id that the HGNC knows exists.
+The HGNC data is loaded in from this link, https://ftp.ebi.ac.uk/pub/databases/genenames/hgnc/json/hgnc\_complete\_set.json , where the data is in json format. The application uses requests to access the data, and the POST route puts the data into the Redis database. The data contains lots of unique and interesting information about every hgnc\_id that the HGNC has approved.
 
 ## Flask App and Its Routes
 
-The Flask application contains a function that loads the data into the Redis database and different routes that return all of the information, only hgnc\_id's, or all of the information about a specific hgnc\_id. There is also a route that clears the data from the database.
+The Flask application contains many different functions for users to query. There is a route that originally loads the data into the Redis database. From there, users can query different routes depending on the type of information they would like to access, including a route that generates a plot of the data. Users can also delete data from the database using routes. 
 
 ## Pulling the Image and Running the App on a VM
 
@@ -42,7 +42,7 @@ Users should then be able to ```curl avlav-test-flask-service:5000/<route>``` al
 
 The ```/image -X POST``` route reads the date each unique gene entry was first approved from the database, tabulates how many genes were approved each year, and creates a bar graph of the data, which it writes into another database.
 
-The ```/image``` route is the default GET request. It returns the plot to the user, so when the route is called, the user must name their plot in the ```curl``` request. For example, ```curl localhost:5000/image>>myimage.png```. After that, the image should be created and available within the repository on the VM. Two ```scp``` actions are then required to see the image.
+The ```/image``` route is the default GET request. It returns the plot to the user, so when the route is called, the user must name their plot in the ```curl``` request, just like ```curl localhost:5000/image>>myimage.png```. After that, the image should be created and available within the repository on the VM. Two ```scp``` actions are then required to see the image.
 
 The first takes place on the VM:
 ```
@@ -54,7 +54,7 @@ On the user's local machine in the intended folder or repository:
 ```
 scp username@address.edu:./<image_name.png> ./
 ```
-The commandline should return confirmation of the ```scp```, and the user should be able to access the plot image from their file explorer now.
+The commandline should return confirmation of the ```scp```, and the user should be able to access the plot image from their file explorer.
 
 The ```/image -X DELETE``` route deletes the image from the database.
 
@@ -151,3 +151,5 @@ For the ```/locusdata``` route which returns the tabulated values for the amount
  ...
 }
 ```
+
+For the ```/jobs``` route which creates a new job to perform an analysis of the data:
