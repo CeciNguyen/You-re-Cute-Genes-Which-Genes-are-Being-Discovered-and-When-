@@ -40,7 +40,7 @@ Users should then be able to ```curl avlav-test-flask-service:5000/<route>``` al
 
 ## ```/image``` Route
 
-The ```/image -X POST``` route reads the date each unique gene entry was first approved from the database, tabulates how many genes were approved each year, and creates a bar graph of the data, which it writes into another database.
+The ```/image?start=int&end=int -X POST``` route reads the date each unique gene entry was first approved from the database, tabulates how many genes were approved each year, and creates a bar graph of the data, which it writes into another database. When parameters are not used, the bar graph includes every year for which there is data. When parameters are used, the bar graph only includes the desired years.
 
 The ```/image``` route is the default GET request. It returns the plot to the user, so when the route is called, the user must name their plot in the ```curl``` request, just like ```curl localhost:5000/image>>myimage.png```. After that, the image should be created and available within the repository on the VM. Two ```scp``` actions are then required to see the image.
 
@@ -72,7 +72,7 @@ Data deleted, there are 0 keys in the db
 
 For the ```/data``` GET route which returns all the data from Redis:
 ```
-[{"version": ..., "alias_symbol": [...], "data_approved_reserved": ...}...]
+[{"version": ..., "alias\_symbol": [...], "data\_approved\_reserved": ...}...]
 ```
 
 For the ```/genes``` route which returns a json-formatted list of all hgnc_ids:
@@ -82,10 +82,10 @@ For the ```/genes``` route which returns a json-formatted list of all hgnc_ids:
 
 For the ```/genes/<hgnc_id>``` route which returns all the data associated with <hgnc_id>:
 ```
-{["hgnc_id": "HGNC:24523", "location": ..., ...]}
+{["hgnc\_id": "HGNC:24523", "location": ..., ...]}
 ```
 
-For the ```/image``` POST route which creates a plot image and loads it into Redis:
+For the ```/image?start=int&end=int``` POST route which creates a plot image for the desired years and loads it into Redis:
 ```
 Image created
 ```
