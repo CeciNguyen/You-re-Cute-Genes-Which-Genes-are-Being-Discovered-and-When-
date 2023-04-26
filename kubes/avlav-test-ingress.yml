@@ -8,7 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - host: "kjm24.coe332.tacc.cloud"
+  - host: "avlav.coe332.tacc.cloud"
     http:
         paths:
         - pathType: Prefix
@@ -17,4 +17,4 @@ spec:
             service:
               name: flasktest-service-nodeport
               port:
-                  number: #unique to nodeport k8 thing
+                  number: 32766
