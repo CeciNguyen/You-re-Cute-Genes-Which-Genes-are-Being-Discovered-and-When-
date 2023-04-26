@@ -11,6 +11,7 @@ import json
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import jobs
 
 app = Flask(__name__)
 
@@ -286,45 +287,32 @@ def get_help() -> str:
     head3 = "\ndelete data from the database\n"
     head4 = "\nget help\n"
 
-    one ="   /data (GET)                                Return all the data in the database\n"
-    two ="   /data (POST)                               Post the data to the database\n"
-    thr ="   /data (DELETE)                             Delete the data from the database\n"
-    fou ="   /genes (GET)                               Return a list of all HGNC IDs\n"
-    fiv ="   /genes/<hgnc_id> (GET)                     Returns all of the information for a specified HGNC ID\n"
-    six ="   /help (GET)                                Return help text for the user\n"
-    sev ="   /image (POST)                              Generate a plot and post it to the database\n"
-    eig ="   /image (DELETE)                            Delete image from the database\n"
-    nin ="   /image (GET)                               Return image to the user\n"
-    ten ="   /when/<hgnc_id> (GET)                      Return dates of approval or modification for a specified HGNC ID\n"
-    ele ="   /imagedata (GET)                           Return the data used to generate the image from the /image route\n"
-    twe ="   /locusdata (GET)                           Return the number of entries in each locus group\n"
-    thi ="   /locus/<hgnc_id>                           Return the locus group of a specified HGNC ID\n"
+    one ="   /data (GET)                                    Return all the data in the database\n"
+    two ="   /data (POST)                                   Post the data to the database\n"
+    thr ="   /data (DELETE)                                 Delete the data from the database\n"
+    fou ="   /genes (GET)                                   Return a list of all HGNC IDs\n"
+    fiv ="   /genes/<hgnc_id> (GET)                         Returns all of the information for a specified HGNC ID\n"
+    six ="   /help (GET)                                    Return help text for the user\n"
+    sev ="   /image (POST)                                  Generate a plot and post it to the database\n"
+    eig ="   /image (DELETE)                                Delete image from the database\n"
+    nin ="   /image (GET)                                   Return image to the user\n"
+    ten ="   /when/<hgnc_id> (GET)                          Return dates of approval or modification for a specified HGNC ID\n"
+    ele ="   /imagedata (GET)                               Return the data used to generate the image from the /image route\n"
+    twe ="   /locusdata (GET)                               Return the number of entries in each locus group\n"
+    thi ="   /locus/<hgnc_id>                               Return the locus group of a specified HGNC ID\n"
     return intro + head2 + two + sev + head1 + one + fou + fiv + nin + ele+ ten +twe + thi+ head3 + thr + eig + head4 + six
 
-@app.route('/helpKami', methods=['GET'])
-def DS_Help() -> str:
-    """
-    This route returns the doc strings of each route.
-
-    Returns:
-        Dicthelp (str): The string of each route doc-string
-        with its corresponding route call.
-    """
-    Dicthelp = "/data : " + str(handle_data.__doc__) + "\n" + "/genes : " + str(get_genes.__doc__) + "\n" + "/locusdata : " + str(get_locusdata.__doc__) + "\n" + "/genes/<hgnc_id> : " + str(get_gene.__doc__) + "\n" + "/locus/<hgnc_id> : " + str(get_locus.__doc__) + "\n" + "/when/<hgnc_id> : " + str(get_data.__doc__) + "\n" + "/image : " + str(get_image.__doc__) + "\n" + "/imagedata : " + str(get_imagedata.__doc__) + "\n" + "/help : " + str(get_help.__doc__) + "\n"
-
-    return Dicthelp
-
 @app.route('/jobs', methods=['POST'])
-  def jobs_api():
-      """
-      API route for creating a new job to do some analysis. This route accepts a JSON payload
-      describing the job to be created.
-      """
-      try:
-          job = request.get_json(force=True)
-      except Exception as e:
-          return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
-      return json.dumps(jobs.add_job(job['start'], job['end']))
+def jobs_api():
+    """
+    API route for creating a new job to do some analysis. This route accepts a JSON payload
+    describing the job to be created.
+    """
+    try:
+        job = request.get_json(force=True)
+    except Exception as e:
+        return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
+    return json.dumps(jobs.add_job(job['start'], job['end']))
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

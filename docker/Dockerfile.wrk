@@ -10,4 +10,4 @@ RUN pip install hotqueue==0.2.8
 
 COPY gene_api.py /gene_api.py
 
-CMD ["python", "gene_api.py"]
+CMD ["python", "worker.py"]

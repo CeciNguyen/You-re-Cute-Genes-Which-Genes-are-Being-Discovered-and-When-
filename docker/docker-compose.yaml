@@ -12,7 +12,8 @@ services:
     flask-app:
         build:
             context: ./
-            dockerfile: ./Dockerfile
+            dockerfile: ./Dockerfile.api
+            dockerfile: ./Dockerfile.wrk
         depends_on:
             - redis-db
         image: kjm24/gene_api:1.0
