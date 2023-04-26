@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-#Anna Victoria Lavelle
+#Anna Victoria Lavelle, Kamilla Madera, Dieu-Quyen Nguyen
 #April 26, 2023
 
 from flask import Flask, request, send_file
