@@ -23,6 +23,10 @@ Then, ```docker-compose up --build``` will get the container running using the c
 
 In a separate window, you can use ``` curl localhost:5000/<route> ``` to call the routes.
 
+## Jobs and Queue
+
+The jobs and workers are meant to help with large data sets and using them to make images/plots for these large ranges of data. The jobs and workers have their own python script and the worker also has its own deployment pod in order to allow for multiple workers to work on different jobs simultaneously if needed. The job functions are called by app routes in the main gene_api script. Essentially these app routes and functions generally just add specific jobs, depending on the parameters provided in the curl command, to the queue where the workers will get from the queue and execute the job of creating the images.
+
 ## Building a New Image from the Dockerfile
 
 In order to build a new image from the Dockerfile, use the same ```docker pull``` command from above. 
@@ -155,3 +159,10 @@ For the ```/locusdata``` route which returns the tabulated values for the amount
 ```
 
 For the ```/jobs``` route which creates a new job to perform an analysis of the data:
+There are 2 methods for this route, a GET and POST. 
+- The Post is what will initialize the parameteres used in the job functions which will look something like this when called `curl localhost:5000/jobs -X POST -d '{"start":0, "end":24}'` (the start and end variables vary on the user).  
+- While the Get method is purely supposed to return a list of all the jobs created and when called should look like this `curl localhost:5000/jobs`.
+
+For the ```/jobs/<id>``` route this route returns the parameters of the specific id provided, such as the status and start/end parameters. Will look like this when called `curl localhost:5000/jobs/<string id>` the string id will have to be one of the ids provided from the jobs GET route.
+
+For the ```/jobs/<id>/results``` route it will retrieve the plot to the users computer as stated in the image get route. Which will look like this `curl localhost:5000/jobs/<string id>/results`, When running this route the user must be aware that the id they are callling the results must have the status as completed otherwise there will be an error thrown seeing as the job has yet to have been executed. After successfully running this app route, the user must run the 2 scp commands as stated in the Image route.
