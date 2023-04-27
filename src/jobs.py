@@ -3,7 +3,7 @@ import os
 from hotqueue import HotQueue
 import redis
 
-redis_ip = os.environ.get('REDIS_IP')
+redis_ip = os.environ.get('REDIS_IP', '172.17.0.1')
 
 q = HotQueue("queue", host=redis_ip, port=6379, db=3)
 rd = redis.Redis(host=redis_ip, port=6379, db=4)
