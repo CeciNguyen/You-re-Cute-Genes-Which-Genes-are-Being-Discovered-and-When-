@@ -356,12 +356,22 @@ def jobs_api():
 
 @app.route('/jobs/<string:id>', methods=['GET'])
 def id_status(str:id):
+    """
+    Api Route for getting the status parameter for the given id.
+    Args:
+        (string) id: The specific string id as provided from the Get route.
+    """
     job = get_job_by_id(id)
     if job:
         return job['status']
 
 @app.route('/jobs/<string:id>/results', methods=['GET'])
 def id_results(str:id):
+    """
+    Api Route that retrieves the plot and saves for the user.
+    Args:
+        (string) id: The specific string id as provided from the Get route.
+    """
     path = './myapprovalyears.png'
     with open(path, 'wb') as f:
         try:
