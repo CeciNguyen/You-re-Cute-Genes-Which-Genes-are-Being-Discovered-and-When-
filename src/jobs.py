@@ -1,12 +1,13 @@
-import uuid
-import os
 from hotqueue import HotQueue
 import redis
+import json
+import uuid
+import os
 
 redis_ip = os.environ.get('REDIS_IP', '172.17.0.1')
 
-q = HotQueue("queue", host=redis_ip, port=6379, db=3)
-rd = redis.Redis(host=redis_ip, port=6379, db=4)
+qw = HotQueue("queue", host=redis_ip, port=6379, db=1)
+wd = redis.Redis(host=redis_ip, port=6379, db=2)
 
 def generate_jid():
     """
@@ -40,17 +41,17 @@ def instantiate_job(jid, status, start, end):
 
 def save_job(job_key, job_dict):
     """Save a job object in the Redis database."""
-    rd.hset(job_key, mapping=job_dict)
+    wd.hset(job_key, mapping=job_dict)
 
 def queue_job(jid):
     """Add a job to the redis queue."""
-    q.put(jid)
+    qw.put(jid)
 
 def add_job(start, end, status="submitted"):
     """Add a job to the redis queue."""
-    jid = _generate_jid()
+    jid = generate_jid()
     job_dict = instantiate_job(jid, status, start, end)
-    save_job(_generate_job_key(jid), job_dict)
+    save_job(generate_job_key(jid), job_dict)
     queue_job(jid)
     return job_dict
 
@@ -59,6 +60,6 @@ def update_job_status(jid, status):
     job = get_job_by_id(jid)
     if job:
         job['status'] = status
-        _save_job(_generate_job_key(jid), job)
+        save_job(generate_job_key(jid), job)
     else:
         raise Exception()
