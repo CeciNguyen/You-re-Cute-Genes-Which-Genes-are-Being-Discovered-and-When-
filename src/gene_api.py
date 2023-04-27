@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-#Anna Victoria Lavelle
+#Anna Victoria Lavelle, Kamilla Madera, Dieu-Quyen Nguyen
 #April 26, 2023
 
 from flask import Flask, request, send_file
@@ -198,7 +198,8 @@ def get_image():
     DELETE: Deletes the image from the database and returns confirmation of this 
         to the user.
     Args:
-        POST: None.
+        POST: start (int): Starting year for the plot.
+              end (int): Ending year for the plot.
         GET: None.
         DELETE: None.
     Returns:
@@ -212,6 +213,25 @@ def get_image():
         return ("No data in the database. Please use a POST route first.\n")
     counts = []
     years = []
+    start = request.args.get('start', 1986)
+    end = request.args.get('end', 2023)
+
+    if start:
+        try:
+            start = int(start)
+        except ValueError:
+            return ("Enter a positive integer for start year.", 400)
+
+    if end:
+        try:
+            end = int(end)
+        except ValueError:
+            return ("Enter a positive integer for end year.", 400)
+
+    if start and end:
+        if start >= end:
+            return ("Your start year must be less than your end year.")
+
     if request.method == 'POST':
         for item in rd.keys():
             gene = json.loads(rd.get(item))
@@ -224,6 +244,10 @@ def get_image():
         for item in yeard:
             y.append(item)
             c.append(yeard[item])
+        sind = y.index(str(start))
+        eind = y.index(str(end))+1
+        y = y[sind:eind]
+        c = c[sind:eind]
         plt.figure(figsize=(28,6))
         plt.bar(y, c, width = 0.35)
         plt.xlabel("Years")
@@ -231,8 +255,12 @@ def get_image():
         plt.title("Genes Approved Each Year")
         plt.savefig('approvalyears.png')
         file_bytes = open('./approvalyears.png', 'rb').read()
+        dset = {}
+        for x in range(len(y)):
+            dset.update({str(y[x]):c[x]})
         rd1.set('genes_approved', file_bytes)
-        rd1.set('image_data', json.dumps(yeard))
+        #rd1.set('image_data', json.dumps(yeard))
+        rd1.set('image_data', json.dumps(dset))
         return ("Image created\n")
     elif request.method == 'GET':
         path = './myapprovalyears.png'
@@ -287,32 +315,33 @@ def get_help() -> str:
     head3 = "\ndelete data from the database\n"
     head4 = "\nget help\n"
 
-    one ="   /data (GET)                                Return all the data in the database\n"
-    two ="   /data (POST)                               Post the data to the database\n"
-    thr ="   /data (DELETE)                             Delete the data from the database\n"
-    fou ="   /genes (GET)                               Return a list of all HGNC IDs\n"
-    fiv ="   /genes/<hgnc_id> (GET)                     Returns all of the information for a specified HGNC ID\n"
-    six ="   /help (GET)                                Return help text for the user\n"
-    sev ="   /image (POST)                              Generate a plot and post it to the database\n"
-    eig ="   /image (DELETE)                            Delete image from the database\n"
-    nin ="   /image (GET)                               Return image to the user\n"
-    ten ="   /when/<hgnc_id> (GET)                      Return dates of approval or modification for a specified HGNC ID\n"
-    ele ="   /imagedata (GET)                           Return the data used to generate the image from the /image route\n"
-    twe ="   /locusdata (GET)                           Return the number of entries in each locus group\n"
-    thi ="   /locus/<hgnc_id>                           Return the locus group of a specified HGNC ID\n"
+    one ="   /data (GET)                                    Return all the data in the database\n"
+    two ="   /data (POST)                                   Post the data to the database\n"
+    thr ="   /data (DELETE)                                 Delete the data from the database\n"
+    fou ="   /genes (GET)                                   Return a list of all HGNC IDs\n"
+    fiv ="   /genes/<hgnc_id> (GET)                         Returns all of the information for a specified HGNC ID\n"
+    six ="   /help (GET)                                    Return help text for the user\n"
+    sev ="   /image?start=year&end=year (POST)              Generate a plot of the specified years and post it to the database\n"
+    eig ="   /image (DELETE)                                Delete image from the database\n"
+    nin ="   /image (GET)                                   Return image to the user\n"
+    ten ="   /when/<hgnc_id> (GET)                          Return dates of approval or modification for a specified HGNC ID\n"
+    ele ="   /imagedata (GET)                               Return the data used to generate the image from the /image route\n"
+    twe ="   /locusdata (GET)                               Return the number of entries in each locus group\n"
+    thi ="   /locus/<hgnc_id> (GET)                         Return the locus group of a specified HGNC ID\n"
+    fot ="   /jobs (POST)                                   Create a new job to do some analysis of the data\n"
     return intro + head2 + two + sev + head1 + one + fou + fiv + nin + ele+ ten +twe + thi+ head3 + thr + eig + head4 + six
 
 @app.route('/jobs', methods=['POST,GET'])
 def jobs_api():
     """
-    API route for creating a new job to do some analysis. This route 
+    API route for creating a new job to do some analysis. This route
     accepts a JSON payload describing the job to be created.
     """
     try:
           job = request.get_json(force=True)
     except Exception as e:
         return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
-    
+
     if request.method == 'POST':
         start = request.json['start']
         end = request.json['end']
@@ -340,7 +369,7 @@ def id_results(str:id):
         except TypeError:
             return ("No image in the database. Please use a POST route first.\n")
         f.write(wd.get('{id}_plot'))
-    return send_file(path, mimetype='image/png', as_attachment=True)   
-
+    return send_file(path, mimetype='image/png', as_attachment=True)
+                
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
