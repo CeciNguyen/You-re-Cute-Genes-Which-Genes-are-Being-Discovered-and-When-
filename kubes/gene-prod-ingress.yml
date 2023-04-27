@@ -17,4 +17,4 @@ spec:
             service:
               name: prod-service-nodeport
               port:
-                  number: 32766
+                  number: 31817
