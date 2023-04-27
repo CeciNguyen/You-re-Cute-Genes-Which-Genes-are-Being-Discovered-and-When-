@@ -163,6 +163,6 @@ There are 2 methods for this route, a GET and POST.
 - The Post is what will initialize the parameteres used in the job functions which will look something like this when called `curl localhost:5000/jobs -X POST -d '{"start":0, "end":24}'` (the start and end variables vary on the user).  
 - While the Get method is purely supposed to return a list of all the jobs created and when called should look like this `curl localhost:5000/jobs`.
 
-For the ```/jobs/<id>``` route this route returns the parameters of the specific id provided, such as the status and start/end parameters. Will look like this when called `curl localhost:5000/jobs/<string id>` the string id will have to be one of the ids provided from the jobs GET route.
+For the ```/jobs/<id>``` route it will return the status of the specific job id provided.. Will look like this when called `curl localhost:5000/jobs/<string id>` the string id will have to be one of the ids provided from the jobs GET route.
 
 For the ```/jobs/<id>/results``` route it will retrieve the plot to the users computer as stated in the image get route. Which will look like this `curl localhost:5000/jobs/<string id>/results`, When running this route the user must be aware that the id they are callling the results must have the status as completed otherwise there will be an error thrown seeing as the job has yet to have been executed. After successfully running this app route, the user must run the 2 scp commands as stated in the Image route.
