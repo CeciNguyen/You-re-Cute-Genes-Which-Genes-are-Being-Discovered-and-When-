@@ -34,9 +34,11 @@ Clone the repository and pull the image in a Kubernetes cluster using instructio
 
 Users must then ```kubectl apply -f <file_name.yml>``` for each service, deployment, and pvc. 
 
-Then, users should exec into the debug pod. Using ```kubectl get pods```, the debug bod name should become available. Exec into this pod using ```kubectl exec -it <debug_pod_name> --/bin/bash```.
+Then, users should exec into the debug pod. Using ```kubectl get pods```, the debug bod name should become available. Exec into this pod using ```kubectl exec -it <debug_pod_name> -- /bin/bash```.
 
 Users should then be able to ```curl avlav-test-flask-service:5000/<route>``` all of the routes from within the debug pod.
+
+In addition, it is possible to ```curl``` the routes from the commandline in kube-access without having to exec into a pod. Users should check the port of their NodePort using kubectl get services. This port number should match the port number for the prod-service-nodeport in the gene-prod-ingress.yml file, as well. Using that port, users can curl the routes with ```curl avlav.coe332.tacc.cloud:<port>/route```. The curl with the current specified port for the NodePort and Ingress is ```curl avlav.coe332.tacc.cloud:31817/routes```.
 
 ## ```/image``` Route
 
